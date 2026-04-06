@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Clock, Dumbbell, Calendar } from "lucide-react";
-import type { GetHomeData200TodayWorkoutDay } from "@/app/_lib/api/fetch-generated";
+
 
 const WEEKDAY_LABELS: Record<string, string> = {
   MONDAY: "SEGUNDA",
@@ -17,14 +17,22 @@ function formatDuration(seconds: number) {
   return `${minutes}min`;
 }
 
+export type GenericWorkoutDay = {
+  name: string;
+  weekDay: string;
+  estimatedDurationInSeconds: number;
+  exercisesCount: number;
+  coverImageUrl?: string;
+};
+
 type WorkoutDayCardProps = {
-  workoutDay: NonNullable<GetHomeData200TodayWorkoutDay>;
+  workoutDay: GenericWorkoutDay;
   href?: string;
 };
 
 export function WorkoutDayCard({ workoutDay, href }: WorkoutDayCardProps) {
   const content = (
-    <div className="relative overflow-hidden rounded-2xl bg-black">
+    <div className="relative overflow-hidden rounded-2xl bg-foreground">
       {workoutDay.coverImageUrl && (
         <div
           className="absolute inset-0 bg-cover bg-center opacity-60"
@@ -35,15 +43,15 @@ export function WorkoutDayCard({ workoutDay, href }: WorkoutDayCardProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-900" />
       )}
       <div className="relative flex flex-col gap-16 p-4">
-        <div className="flex items-center gap-1.5 self-start rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 self-start rounded-full bg-background/20 px-3 py-1 text-xs font-medium text-background backdrop-blur-sm">
           <Calendar className="size-3.5" />
           <span>{WEEKDAY_LABELS[workoutDay.weekDay] ?? workoutDay.weekDay}</span>
         </div>
         <div className="flex flex-col gap-1">
-          <h3 className="font-heading text-2xl font-semibold text-white">
+          <h3 className="font-heading text-2xl font-semibold text-background">
             {workoutDay.name}
           </h3>
-          <div className="flex items-center gap-3 text-xs text-white/80">
+          <div className="flex items-center gap-3 text-xs text-background/80">
             <span className="flex items-center gap-1">
               <Clock className="size-3.5" />
               {formatDuration(workoutDay.estimatedDurationInSeconds)}

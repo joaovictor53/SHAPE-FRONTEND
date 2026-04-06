@@ -1,51 +1,81 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Home, CalendarDays, BarChart3, User, Sparkles } from "lucide-react";
+import {
+  House,
+  Calendar,
+  ChartNoAxesColumn,
+  UserRound,
+} from "lucide-react";
+import dayjs from "dayjs";
+import { getHomeData } from "@/app/_lib/api/fetch-generated";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
-  { href: "/", icon: Home, label: "Home" },
-  { href: "#", icon: CalendarDays, label: "Agenda" },
-  { href: "#ai", icon: Sparkles, label: "AI", isCenter: true },
-  { href: "#", icon: BarChart3, label: "Stats" },
-  { href: "#", icon: User, label: "Perfil" },
-];
 
-export function BottomNav() {
-  const pathname = usePathname();
+interface BottomNavProps {
+  activePage?: "home" | "calendar" | "stats" | "profile";
+}
+
+export async function BottomNav({ activePage = "home" }: BottomNavProps) {
+  const today = dayjs();
+  const homeData = await getHomeData(today.format("YYYY-MM-DD"));
+
+  const calendarHref =
+    homeData.status === 200 && homeData.data.activeWorkoutPlanId
+      ? `/workout-plans/${homeData.data.activeWorkoutPlanId}`
+      : null;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-around border-t border-border bg-background px-2 pb-safe">
-      {NAV_ITEMS.map((item) => {
-        const isActive = item.href === pathname;
-        const Icon = item.icon;
-
-        if (item.isCenter) {
-          return (
-            <button
-              key={item.label}
-              className="flex size-14 -translate-y-3 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg"
-            >
-              <Icon className="size-6" />
-            </button>
-          );
-        }
-
-        return (
-          <Link
-            key={item.label}
-            href={item.href}
+    <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-6 rounded-t-[20px] border border-border bg-background px-6 py-4">
+      <Link href="/" className="p-3">
+        <House
+          className={cn(
+            "size-6",
+            activePage === "home" ? "text-foreground" : "text-muted-foreground"
+          )}
+        />
+      </Link>
+      {calendarHref ? (
+        <Link href={calendarHref} className="p-3">
+          <Calendar
             className={cn(
-              "flex flex-col items-center gap-0.5 py-3 text-muted-foreground transition-colors",
-              isActive && "text-foreground"
+              "size-6",
+              activePage === "calendar"
+                ? "text-foreground"
+                : "text-muted-foreground"
             )}
-          >
-            <Icon className="size-6" />
-          </Link>
-        );
-      })}
+          />
+        </Link>
+      ) : (
+        <button className="p-3">
+          <Calendar
+            className={cn(
+              "size-6",
+              activePage === "calendar"
+                ? "text-foreground"
+                : "text-muted-foreground"
+            )}
+          />
+        </button>
+      )}
+      <Link href="/stats" className="p-3">
+        <ChartNoAxesColumn
+          className={cn(
+            "size-6",
+            activePage === "stats"
+              ? "text-foreground"
+              : "text-muted-foreground"
+          )}
+        />
+      </Link>
+      <Link href="/profile" className="p-3">
+        <UserRound
+          className={cn(
+            "size-6",
+            activePage === "profile"
+              ? "text-foreground"
+              : "text-muted-foreground"
+          )}
+        />
+      </Link>
     </nav>
   );
 }

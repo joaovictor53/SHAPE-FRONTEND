@@ -14,7 +14,7 @@ export default async function AuthPage() {
   if (session.data?.user) redirect("/");
 
   return (
-    <div className="relative flex min-h-svh flex-col bg-black">
+    <div className="relative flex min-h-svh flex-col bg-foreground">
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
       </div>
 

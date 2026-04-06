@@ -18,7 +18,7 @@ export const SignInWithGoogle = () => {
   return (
     <Button
       onClick={handleGoogleLogin}
-      className="h-[38px] rounded-full bg-white px-6 text-black hover:bg-white/90"
+      className="h-[38px] rounded-full bg-background px-6 text-foreground hover:bg-background/90"
     >
       <Image
         src="/google-icon.svg"
