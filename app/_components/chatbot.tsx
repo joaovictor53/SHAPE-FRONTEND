@@ -1,16 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useQueryState, parseAsBoolean, parseAsString } from "nuqs";
 import { Sparkles, X, ArrowUp } from "lucide-react";
 import { Streamdown } from "streamdown";
 import "streamdown/styles.css";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 const SUGGESTED_MESSAGES = ["Monte meu plano de treino"];
+
+const chatFormSchema = z.object({
+  message: z.string().min(1),
+});
+
+type ChatFormValues = z.infer<typeof chatFormSchema>;
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useQueryState(
@@ -22,12 +32,16 @@ export function Chatbot() {
     parseAsString.withDefault(""),
   );
 
-  const [input, setInput] = useState("");
-
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/ai",
     }),
+  });
+
+  const form = useForm<ChatFormValues>({
+    resolver: zodResolver(chatFormSchema),
+    defaultValues: { message: "" },
+    mode: "onChange",
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -67,12 +81,9 @@ export function Chatbot() {
     setInitialMsg(null);
   };
 
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text) return;
-    sendMessage({ text });
-    setInput("");
+  const onSubmit = (values: ChatFormValues) => {
+    sendMessage({ text: values.message });
+    form.reset();
   };
 
   const handleSuggestion = (text: string) => {
@@ -170,25 +181,36 @@ export function Chatbot() {
               </div>
             )}
 
-            <form
-              onSubmit={onSubmit}
-              className="flex items-center gap-2 border-t border-border p-5"
-            >
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Digite sua mensagem"
-                className="rounded-full border-border bg-secondary px-4 py-3 font-heading text-sm text-foreground placeholder:text-muted-foreground"
-              />
-              <Button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                size="icon"
-                className="size-[42px] shrink-0 rounded-full"
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex items-center gap-2 border-t border-border p-5"
               >
-                <ArrowUp className="size-5" />
-              </Button>
-            </form>
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Digite sua mensagem"
+                          className="rounded-full border-border bg-secondary px-4 py-3 font-heading text-sm text-foreground placeholder:text-muted-foreground"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  disabled={!form.formState.isValid || isLoading}
+                  size="icon"
+                  className="size-[42px] shrink-0 rounded-full"
+                >
+                  <ArrowUp className="size-5" />
+                </Button>
+              </form>
+            </Form>
           </div>
         </div>
       </div>

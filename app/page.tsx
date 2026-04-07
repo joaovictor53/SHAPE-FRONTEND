@@ -29,6 +29,9 @@ export default async function Home() {
     throw new Error("Failed to fetch home data");
   }
 
+  if (trainData.status !== 200 || !trainData.data || !homeData.data.activeWorkoutPlanId) {
+    redirect("/onboarding");
+  }
 
   const { todayWorkoutDay, workoutStreak, consistencyByDay } = homeData.data;
   const userName = session.data.user.name?.split(" ")[0] ?? "";

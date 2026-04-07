@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { authClient } from "@/app/_lib/auth-client";
 import { headers } from "next/headers";
-import { getWorkoutDayById, getHomeData, getUserTrainData } from "@/app/_lib/api/fetch-generated";
+import { getWorkoutDay, getHomeData, getUserTrainData } from "@/app/_lib/api/fetch-generated";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { Calendar, Timer, Dumbbell } from "lucide-react";
@@ -47,7 +47,7 @@ export default async function WorkoutDayPage({
 
   const { id: workoutPlanId, dayId } = await params;
   const [workoutDayData, homeData, trainData] = await Promise.all([
-    getWorkoutDayById(workoutPlanId, dayId),
+    getWorkoutDay(workoutPlanId, dayId),
     getHomeData(dayjs().format("YYYY-MM-DD")),
     getUserTrainData(),
   ]);
@@ -55,6 +55,15 @@ export default async function WorkoutDayPage({
 
 
   if (workoutDayData.status !== 200) redirect("/");
+
+  if (
+    trainData.status !== 200 ||
+    !trainData.data ||
+    homeData.status !== 200 ||
+    !homeData.data.activeWorkoutPlanId
+  ) {
+    redirect("/onboarding");
+  }
 
   const {
     name,

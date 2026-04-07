@@ -39,6 +39,15 @@ export default async function StatsPage() {
     throw new Error("Failed to fetch stats");
   }
 
+  if (
+    trainData.status !== 200 ||
+    !trainData.data ||
+    homeData.status !== 200 ||
+    !homeData.data.activeWorkoutPlanId
+  ) {
+    redirect("/onboarding");
+  }
+
   const {
     workoutStreak,
     consistencyByDay,

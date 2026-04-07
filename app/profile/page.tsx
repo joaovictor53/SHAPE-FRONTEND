@@ -27,6 +27,14 @@ export default async function ProfilePage() {
     throw new Error("Failed to fetch user train data");
   }
 
+  if (
+    !trainData.data ||
+    homeData.status !== 200 ||
+    !homeData.data.activeWorkoutPlanId
+  ) {
+    redirect("/onboarding");
+  }
+
   const user = session.data.user;
   const data = trainData.data;
 
