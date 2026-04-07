@@ -5,6 +5,7 @@ import {
   ChartNoAxesColumn,
   UserRound,
 } from "lucide-react";
+import { ChatTriggerButton } from "@/app/_components/chat-trigger-button";
 import dayjs from "dayjs";
 import { getHomeData } from "@/app/_lib/api/fetch-generated";
 import { cn } from "@/lib/utils";
@@ -56,6 +57,9 @@ export async function BottomNav({ activePage = "home" }: BottomNavProps) {
           />
         </button>
       )}
+      
+      <ChatTriggerButton />
+
       <Link href="/stats" className="p-3">
         <ChartNoAxesColumn
           className={cn(
