@@ -1,21 +1,25 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { useQueryState, parseAsBoolean, parseAsString } from "nuqs";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { Send, X, Bot, User, Sparkles, LoaderCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useQueryState, parseAsBoolean, parseAsString } from "nuqs";
+import { Sparkles, X, ArrowUp } from "lucide-react";
 import { Streamdown } from "streamdown";
+import "streamdown/styles.css";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+const SUGGESTED_MESSAGES = ["Monte meu plano de treino"];
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useQueryState(
     "chat_open",
-    parseAsBoolean.withDefault(false)
+    parseAsBoolean.withDefault(false),
   );
   const [initialMsg, setInitialMsg] = useQueryState(
     "chat_initial_message",
-    parseAsString.withDefault("")
+    parseAsString.withDefault(""),
   );
 
   const [input, setInput] = useState("");
@@ -26,163 +30,167 @@ export function Chatbot() {
     }),
   });
 
-  const isLoading = status === "submitted" || status === "streaming";
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const initialMsgSent = useRef(false);
+  const initialMessageSentRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      isOpen &&
+      initialMsg &&
+      !initialMessageSentRef.current
+    ) {
+      initialMessageSentRef.current = true;
+      sendMessage({ text: initialMsg });
+      setInitialMsg(null);
+    }
+  }, [
+    isOpen,
+    initialMsg,
+    sendMessage,
+    setInitialMsg,
+  ]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      initialMessageSentRef.current = false;
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  useEffect(() => {
-    if (isOpen && initialMsg && !initialMsgSent.current) {
-      initialMsgSent.current = true;
-      sendMessage({ text: initialMsg });
-      setInitialMsg(null);
-    }
+  if (!isOpen) return null;
 
-    if (!isOpen) {
-      initialMsgSent.current = false;
-    }
-  }, [isOpen, initialMsg, sendMessage, setInitialMsg]);
+  const handleClose = () => {
+    setIsOpen(false);
+    setInitialMsg(null);
+  };
 
-  const handleSubmit = (e: FormEvent) => {
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const trimmed = input.trim();
-    if (!trimmed || isLoading) return;
-    sendMessage({ text: trimmed });
+    const text = input.trim();
+    if (!text) return;
+    sendMessage({ text });
     setInput("");
   };
 
-  if (!isOpen) return null;
+  const handleSuggestion = (text: string) => {
+    sendMessage({ text });
+  };
+
+  const isLoading = status === "submitted" || status === "streaming";
 
   return (
-    <div className="fixed inset-0 z-100 flex flex-col bg-background animate-in slide-in-from-bottom-full duration-300">
-      <div className="flex items-center justify-between border-b border-border bg-background px-5 py-4">
-        <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary/10">
-            <Sparkles className="size-4 text-primary" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-heading text-sm font-semibold text-foreground">
-              Fit.ai Assistant
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {isLoading ? "Digitando..." : "Online"}
-            </span>
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-8 rounded-full text-muted-foreground"
-          onClick={() => setIsOpen(false)}
-        >
-          <X className="size-5" />
-        </Button>
-      </div>
+    <div
+      className="fixed inset-0 z-60"
+    >
+      <div
+        className="absolute inset-0 bg-foreground/30"
+        onClick={handleClose}
+      />
 
-      <div className="flex-1 overflow-y-auto p-5 pb-24">
-        <div className="flex flex-col gap-6">
-          {messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center gap-4 mt-20">
-              <div className="flex size-16 items-center justify-center rounded-full bg-primary/10">
-                <Sparkles className="size-8 text-primary" />
+      <div className="absolute inset-x-4 bottom-4 top-40 flex flex-col">
+        <div className="flex flex-1 flex-col overflow-hidden rounded-[20px] bg-background">
+          <div className="flex shrink-0 items-center justify-between border-b border-border p-5">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center rounded-full bg-primary/8 border border-primary/8 p-3">
+                <Sparkles className="size-[18px] text-primary" />
               </div>
-              <p
-                className="text-center text-sm text-muted-foreground"
-                style={{ maxWidth: "280px" }}
+              <div className="flex flex-col gap-1.5">
+                <span className="font-heading text-base font-semibold text-foreground">
+                  Coach AI
+                </span>
+                <div className="flex items-center gap-1">
+                  <div className="size-2 rounded-full bg-online" />
+                  <span className="font-heading text-xs text-primary">Online</span>
+                </div>
+              </div>
+            </div>
+            <Button variant="ghost" size="icon" onClick={handleClose}>
+              <X className="size-6 text-foreground" />
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto pb-5">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={
+                  message.role === "assistant"
+                    ? "flex flex-col items-start pl-5 pr-[60px] pt-5"
+                    : "flex flex-col items-end pl-[60px] pr-5 pt-5"
+                }
               >
-                Olá! Sou seu treinador virtual. Como posso te ajudar hoje?
-              </p>
-              <div className="mt-4 flex w-full flex-col gap-2">
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal text-muted-foreground h-auto p-3"
-                  onClick={() =>
-                    sendMessage({ text: "Monte meu plano de treino" })
+                <div
+                  className={
+                    message.role === "assistant"
+                      ? "rounded-xl bg-secondary p-3"
+                      : "rounded-xl bg-primary p-3"
                   }
                 >
-                  Monte meu plano de treino
-                </Button>
-              </div>
-            </div>
-          ) : (
-            messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex gap-3 ${
-                  m.role === "user" ? "flex-row-reverse" : "flex-row"
-                }`}
-              >
-                <div
-                  className={`flex size-8 shrink-0 items-center justify-center rounded-full ${
-                    m.role === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {m.role === "user" ? (
-                    <User className="size-4 shrink-0" />
-                  ) : (
-                    <Bot className="size-4 shrink-0" />
-                  )}
-                </div>
-                <div
-                  className={`flex max-w-[80%] flex-col gap-1 rounded-2xl px-4 py-3 text-sm ${
-                    m.role === "user"
-                      ? "bg-primary text-primary-foreground rounded-tr-none"
-                      : "bg-muted text-foreground rounded-tl-none"
-                  }`}
-                >
-                  {m.role === "user" ? (
-                    <div>{m.content}</div>
-                  ) : (
-                    <div className="prose prose-sm dark:prose-invert wrap-break-word">
-                      <Streamdown content={m.content} />
+                  {message.role === "assistant" ? (
+                    <div className="font-heading text-sm leading-relaxed text-foreground">
+                      {message.parts.map((part, index) =>
+                        part.type === "text" ? (
+                          <Streamdown key={index}>{part.text}</Streamdown>
+                        ) : null,
+                      )}
                     </div>
+                  ) : (
+                    <p className="font-heading text-sm leading-relaxed text-primary-foreground">
+                      {message.parts
+                        .filter((part) => part.type === "text")
+                        .map(
+                          (part) =>
+                            (part as { type: "text"; text: string }).text,
+                        )
+                        .join("")}
+                    </p>
                   )}
                 </div>
               </div>
-            ))
-          )}
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
 
-          {status === "submitted" && (
-            <div className="flex gap-3">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                <Bot className="size-4 shrink-0" />
+          <div className="flex shrink-0 flex-col gap-3">
+            {messages.length === 0 && (
+              <div className="flex gap-2.5 overflow-x-auto px-5">
+                {SUGGESTED_MESSAGES.map((suggestion) => (
+                  <Button
+                    key={suggestion}
+                    onClick={() => handleSuggestion(suggestion)}
+                    variant="secondary"
+                    className="whitespace-nowrap rounded-full bg-primary/10 px-4 py-2 font-heading text-sm text-foreground"
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
               </div>
-              <div className="flex items-center gap-2 rounded-2xl rounded-tl-none bg-muted px-4 py-3 text-sm text-muted-foreground">
-                <LoaderCircle className="size-4 animate-spin" />
-                Pensando...
-              </div>
-            </div>
-          )}
+            )}
 
-          <div ref={messagesEndRef} />
+            <form
+              onSubmit={onSubmit}
+              className="flex items-center gap-2 border-t border-border p-5"
+            >
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Digite sua mensagem"
+                className="rounded-full border-border bg-secondary px-4 py-3 font-heading text-sm text-foreground placeholder:text-muted-foreground"
+              />
+              <Button
+                type="submit"
+                disabled={!input.trim() || isLoading}
+                size="icon"
+                className="size-[42px] shrink-0 rounded-full"
+              >
+                <ArrowUp className="size-5" />
+              </Button>
+            </form>
+          </div>
         </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-background/80 p-4 backdrop-blur-md">
-        <form
-          className="relative flex items-center rounded-full border border-border bg-background px-4 py-2"
-          onSubmit={handleSubmit}
-        >
-          <input
-            className="flex-1 bg-transparent py-1.5 text-sm outline-none placeholder:text-muted-foreground"
-            placeholder="Digite sua mensagem..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={!input.trim() || isLoading}
-            className="size-8 rounded-full bg-primary"
-          >
-            <Send className="size-4 text-primary-foreground" />
-          </Button>
-        </form>
       </div>
     </div>
   );
