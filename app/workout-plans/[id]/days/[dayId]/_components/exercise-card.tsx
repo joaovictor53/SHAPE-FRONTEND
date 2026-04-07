@@ -3,12 +3,12 @@
 import { CircleHelp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQueryState, parseAsBoolean, parseAsString } from "nuqs";
-import type { GetWorkoutDayById200ExercisesItem } from "@/app/_lib/api/fetch-generated";
+import type { GetWorkoutDay200ExercisesItem } from "@/app/_lib/api/fetch-generated";
 
 export function ExerciseCard({
   exercise,
 }: {
-  exercise: GetWorkoutDayById200ExercisesItem;
+  exercise: GetWorkoutDay200ExercisesItem;
 }) {
   const [isOpen, setIsOpen] = useQueryState("chat_open", parseAsBoolean.withDefault(false));
   const [, setInitialMsg] = useQueryState("chat_initial_message", parseAsString.withDefault(""));
