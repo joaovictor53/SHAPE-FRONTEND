@@ -1,6 +1,5 @@
 import * as React from "react";
-import * as LabelPrimitive from "radix-ui";
-import { Slot } from "radix-ui";
+import { Label, Slot } from "radix-ui";
 import {
   Controller,
   FormProvider,
@@ -76,11 +75,11 @@ function useFormField() {
 function FormLabel({
   className,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Label>) {
+}: React.ComponentProps<"label">) {
   const { error, formItemId } = useFormField();
 
   return (
-    <LabelPrimitive.Label
+    <label
       className={cn(error && "text-destructive", className)}
       htmlFor={formItemId}
       {...props}

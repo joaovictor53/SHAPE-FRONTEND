@@ -5,6 +5,8 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Chatbot } from "@/app/_components/chatbot";
 import "./globals.css";
 
+import { Suspense } from "react";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -40,7 +42,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
-            <Chatbot />
+            <Suspense fallback={null}>
+              <Chatbot />
+            </Suspense>
           </ThemeProvider>
         </NuqsAdapter>
       </body>
