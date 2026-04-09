@@ -25,7 +25,11 @@ async function handler(req: NextRequest) {
       response.headers.getSetCookie().forEach((cookie) => {
         responseHeaders.append("set-cookie", cookie);
       });
-    } else if (key.toLowerCase() !== "transfer-encoding") {
+    } else if (
+      key.toLowerCase() !== "transfer-encoding" &&
+      key.toLowerCase() !== "content-encoding" &&
+      key.toLowerCase() !== "content-length"
+    ) {
       responseHeaders.set(key, value);
     }
   });
