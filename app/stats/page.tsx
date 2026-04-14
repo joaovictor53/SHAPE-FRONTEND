@@ -43,7 +43,7 @@ export default async function StatsPage() {
     trainData.status !== 200 ||
     !trainData.data ||
     homeData.status !== 200 ||
-    !homeData.data.activeWorkoutPlanId
+    !homeData.data?.activeWorkoutPlanId
   ) {
     redirect("/onboarding");
   }
@@ -54,7 +54,7 @@ export default async function StatsPage() {
     completedWorkoutsCount,
     conclusionRate,
     totalTimeInSeconds,
-  } = statsResponse.data;
+  } = statsResponse.data || {};
 
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
@@ -64,7 +64,7 @@ export default async function StatsPage() {
           style={{ fontFamily: "var(--font-anton)" }}
         >
           Fit.ai
-        </p>
+FIT        </p>
       </div>
 
       <div className="px-5">

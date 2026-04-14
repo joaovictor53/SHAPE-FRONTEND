@@ -49,9 +49,9 @@ export default async function WorkoutCompletePage({
     redirect("/onboarding");
   }
 
-  const userName = session.data.user.name?.split(" ")[0] ?? "";
-  const { name, coverImageUrl, estimatedDurationInSeconds, exercises, sessions } =
-    workoutDayData.data;
+  const userName = session.data?.user?.name?.split(" ")[0] ?? "";
+  const { name = "", coverImageUrl, estimatedDurationInSeconds = 0, exercises = [], sessions = [] } =
+    workoutDayData.data || {};
 
   const completedSession = sessions.find((s) => s.completedAt);
   if (!completedSession) {
@@ -81,7 +81,7 @@ export default async function WorkoutCompletePage({
         </div>
 
         <h1 className="font-heading text-[28px] font-semibold italic tracking-wide text-foreground">
-          WORKOUT COMPLETE
+          Treino Completo!
         </h1>
         <p className="font-heading text-sm text-muted-foreground">
           Você mandou bem hoje{userName ? `, ${userName}` : ""}!

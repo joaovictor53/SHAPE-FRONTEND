@@ -29,12 +29,12 @@ export default async function Home() {
     throw new Error("Failed to fetch home data");
   }
 
-  if (trainData.status !== 200 || !trainData.data || !homeData.data.activeWorkoutPlanId) {
+  if (trainData.status !== 200 || !trainData.data || !homeData.data?.activeWorkoutPlanId) {
     redirect("/onboarding");
   }
 
-  const { todayWorkoutDay, workoutStreak, consistencyByDay } = homeData.data;
-  const userName = session.data.user.name?.split(" ")[0] ?? "";
+  const { todayWorkoutDay, workoutStreak, consistencyByDay } = homeData.data || {};
+  const userName = session.data?.user?.name?.split(" ")[0] ?? "";
 
   return (
     <div className="flex min-h-svh flex-col bg-background pb-24">
@@ -57,18 +57,18 @@ export default async function Home() {
         </div>
 
         <p
-          className="relative text-[22px] uppercase leading-[1.15] text-background"
+          className="relative text-[22px] uppercase leading-[1.15] text-white"
           style={{ fontFamily: "var(--font-anton)" }}
         >
-          Fit.ai
+          KINETIC
         </p>
 
         <div className="relative flex w-full items-end justify-between">
           <div className="flex flex-col gap-1.5">
-            <h1 className="font-heading text-2xl font-semibold leading-[1.05] text-background">
+            <h1 className="font-heading text-2xl font-semibold leading-[1.05] text-white">
               Olá, {userName}
             </h1>
-            <p className="font-heading text-sm leading-[1.15] text-background/70">
+            <p className="font-heading text-sm leading-[1.15] text-white/70">
               Bora treinar hoje?
             </p>
           </div>

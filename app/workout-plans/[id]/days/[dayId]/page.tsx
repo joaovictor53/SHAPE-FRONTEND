@@ -60,19 +60,19 @@ export default async function WorkoutDayPage({
     trainData.status !== 200 ||
     !trainData.data ||
     homeData.status !== 200 ||
-    !homeData.data.activeWorkoutPlanId
+    !homeData.data?.activeWorkoutPlanId
   ) {
     redirect("/onboarding");
   }
 
   const {
-    name,
-    weekDay,
-    estimatedDurationInSeconds,
-    exercises,
-    sessions,
+    name = "",
+    weekDay = "MONDAY",
+    estimatedDurationInSeconds = 0,
+    exercises = [],
+    sessions = [],
     coverImageUrl,
-  } = workoutDayData.data;
+  } = workoutDayData.data || {};
 
   const durationInMinutes = Math.round(estimatedDurationInSeconds / 60);
 

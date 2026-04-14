@@ -34,12 +34,12 @@ export default async function WorkoutPlanPage({
     trainData.status !== 200 ||
     !trainData.data ||
     homeData.status !== 200 ||
-    !homeData.data.activeWorkoutPlanId
+    !homeData.data?.activeWorkoutPlanId
   ) {
     redirect("/onboarding");
   }
 
-  const { name, workoutDays } = planData.data;
+  const { name = "", workoutDays = [] } = planData.data || {};
 
   // Sorting days by a typical logic or respecting API order. Assuming API order is correct.
   return (
