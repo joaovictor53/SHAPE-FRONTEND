@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { completeWorkoutSessionAction } from "../_actions";
 
@@ -14,10 +15,21 @@ export function CompleteWorkoutButton({
   sessionId: string;
 }) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   function handleComplete() {
     startTransition(async () => {
-      await completeWorkoutSessionAction(workoutPlanId, workoutDayId, sessionId);
+      const response = await completeWorkoutSessionAction(
+        workoutPlanId,
+        workoutDayId,
+        sessionId,
+      );
+
+      if (response.status === 200) {
+        router.push(
+          `/workout-plans/${workoutPlanId}/days/${workoutDayId}/complete?sessionId=${sessionId}`,
+        );
+      }
     });
   }
 
