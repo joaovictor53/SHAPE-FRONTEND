@@ -29,11 +29,28 @@ export async function completeWorkoutSessionAction(
   });
   
   if (response.status === 200) {
-    // Revalidar tanto a página do dia quanto as páginas iniciais e do calendário
     revalidatePath(`/workout-plans/${workoutPlanId}/days/${workoutDayId}`);
     revalidatePath(`/workout-plans/${workoutPlanId}`);
     revalidatePath("/");
   }
   
+  return response;
+}
+
+export async function resetWorkoutSessionAction(
+  workoutPlanId: string,
+  workoutDayId: string,
+  sessionId: string
+) {
+  const response = await updateWorkoutSession(workoutPlanId, workoutDayId, sessionId, {
+    completedAt: null,
+  });
+
+  if (response.status === 200) {
+    revalidatePath(`/workout-plans/${workoutPlanId}/days/${workoutDayId}`);
+    revalidatePath(`/workout-plans/${workoutPlanId}`);
+    revalidatePath("/");
+  }
+
   return response;
 }

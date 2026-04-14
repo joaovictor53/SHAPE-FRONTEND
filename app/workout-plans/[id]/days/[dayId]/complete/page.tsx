@@ -14,6 +14,7 @@ import {
 import { BottomNav } from "@/app/_components/bottom-nav";
 import { Button } from "@/components/ui/button";
 import { ShareToSocialButton } from "./_components/share-to-social-button";
+import { ResetWorkoutButton } from "./_components/reset-workout-button";
 
 export default async function WorkoutCompletePage({
   params,
@@ -158,6 +159,12 @@ export default async function WorkoutCompletePage({
 
       <div className="relative flex flex-col gap-3 px-5 pt-6">
         <ShareToSocialButton title="Fit.ai" text={shareText} />
+
+        <ResetWorkoutButton
+          workoutPlanId={workoutPlanId}
+          workoutDayId={dayId}
+          sessionId={completedSession.id}
+        />
 
         <Button
           asChild
