@@ -63,8 +63,7 @@ export default async function StatsPage() {
           className="text-[22px] uppercase leading-[1.15] text-foreground"
           style={{ fontFamily: "var(--font-anton)" }}
         >
-          Fit.ai
-FIT        </p>
+          KINETIC  </p>
       </div>
 
       <div className="px-5">

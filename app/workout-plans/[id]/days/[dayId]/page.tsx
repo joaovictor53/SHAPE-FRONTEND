@@ -107,9 +107,9 @@ export default async function WorkoutDayPage({
           )}
 
           <div className="relative">
-            <div className="flex items-center gap-1 rounded-full bg-background/20 px-2.5 py-1.5 backdrop-blur-sm">
-              <Calendar className="size-3.5 text-background" />
-              <span className="font-heading text-xs font-semibold uppercase text-background">
+            <div className="flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-1.5 backdrop-blur-sm">
+              <Calendar className="size-3.5 text-white" />
+              <span className="font-heading text-xs font-semibold uppercase text-white">
                 {WEEKDAY_LABELS[weekDay]}
               </span>
             </div>
@@ -117,19 +117,19 @@ export default async function WorkoutDayPage({
 
           <div className="relative flex w-full items-end justify-between">
             <div className="flex flex-col gap-2">
-              <h2 className="font-heading text-2xl font-semibold leading-[1.05] text-background">
+              <h2 className="font-heading text-2xl font-semibold leading-[1.05] text-white">
                 {name}
               </h2>
               <div className="flex items-start gap-2">
                 <div className="flex items-center gap-1">
-                  <Timer className="size-3.5 text-background/80" />
-                  <span className="font-heading text-xs text-background/80">
+                  <Timer className="size-3.5 text-white/80" />
+                  <span className="font-heading text-xs text-white/80">
                     {durationInMinutes}min
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Dumbbell className="size-3.5 text-background/80" />
-                  <span className="font-heading text-xs text-background/80">
+                  <Dumbbell className="size-3.5 text-white/80" />
+                  <span className="font-heading text-xs text-white/80">
                     {exercises.length} exercícios
                   </span>
                 </div>

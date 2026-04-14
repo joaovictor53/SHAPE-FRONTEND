@@ -119,10 +119,10 @@ export default async function WorkoutCompletePage({
             />
 
             <div className="absolute bottom-5 left-5 right-5">
-              <p className="font-heading text-xl font-semibold text-background">
+              <p className="font-heading text-xl font-semibold text-white">
                 {name}
               </p>
-              <p className="mt-1 font-heading text-xs text-background/70">
+              <p className="mt-1 font-heading text-xs text-white/70">
                 Sessão de treino{sp.sessionId ? ` • ${sp.sessionId.slice(0, 8)}` : ""}
               </p>
             </div>
